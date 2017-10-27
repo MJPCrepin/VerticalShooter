@@ -8,8 +8,9 @@ Manuel Crepin (manuel@crep.in), Oct'17
 * Score based on peak height
 * Floor deleted after liftoff
 * Enemies spawn continuously on platforms
+* Enemies face/aim at player 
 
 ## To do
-* Autoaim for player and enemies
-* Fancy effects time allowing
+* Pew pew
+* Fancy effects (time allowing)
 * Some form of punishment for just going up?
