@@ -2,15 +2,15 @@ VertShooterDemo
 ====
 Manuel Crepin (manuel@crep.in), Oct'17
 
-## Current features
+## Mechanics
 * Player object lifts off with any key
 * Camera follows player max height
-* Score based on peak height
-* Floor deleted after liftoff
+* Score based on peak player height
+* GameObjects destroyed when out of bounds
 * Enemies spawn continuously on platforms
-* Enemies face/aim at player 
+* Enemies aim around player and soot
 
 ## To do
-* Pew pew
-* Fancy effects (time allowing)
-* Some form of punishment for just going up?
+* Player shooting
+* Fancy effects
+* Punishment for going straight up

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
+    [Header("Object References")]
+
     public GameObject player;
 
     void Update () {

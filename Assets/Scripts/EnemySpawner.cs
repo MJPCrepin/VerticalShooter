@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour {
 
+    [Header("Object References")]
+
     public Transform camera;
     private float cameraDistance;
 
@@ -13,7 +15,7 @@ public class EnemySpawner : MonoBehaviour {
     private int smallestArraySize;
 
     // Keep track of generated platforms
-    Queue<GameObject> platforms = new Queue<GameObject>();
+    private Queue<GameObject> platforms = new Queue<GameObject>();
     private float highestPlatLeft, highestPlatRight;
     private float nominalPlatformInterval = 10f;
 
@@ -26,8 +28,8 @@ public class EnemySpawner : MonoBehaviour {
         cameraDistance = 0 - camera.position.z;
 
         // Initial enemy platform spawns
-        GenerateRandomPlatform(true, 10f); //left
-        GenerateRandomPlatform(false, 10f); //right
+        GenerateRandomPlatform(true, 15f); //left
+        GenerateRandomPlatform(false, 15f); //right
     }
 	
 	void Update () {

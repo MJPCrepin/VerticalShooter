@@ -5,23 +5,26 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-    // Player behaviour variables
-    private float thrustForce = 15f;
-    private float idleThrust = 0.95f; // idle velocity multiplier (smoother descent)
-    private Rigidbody playerRb;
+    [Header("Properties")]
 
-    // Score variables
+    private float thrustForce, idleThrust;
+    private Rigidbody playerRb;
+    public int hitpoints;
+
+    [Header("Object References")]
+
     public GameObject camera; // camera y used for score
     public Text score;
     public int highScore;
-
-    // To destroy when far enough
-    public GameObject floor;
+    public GameObject floor; // To destroy when far enough
 
     void Start ()
     {
         playerRb = gameObject.GetComponentInChildren<Rigidbody>();
-	}
+        thrustForce = 15f;
+        idleThrust = 0.95f; // idle velocity multiplier (smoother descent)
+        hitpoints = 10;
+    }
 	
 	void FixedUpdate () // Physics events
     {
@@ -52,16 +55,24 @@ public class PlayerController : MonoBehaviour {
             Destroy(floor);
         }
 
-        // Game over if player falls too far back
-        if (transform.position.y < highScore - 7)
-        {
-            print("GameOver");
-        }
+        // Game over scenarios
+        if (transform.position.y < highScore - 7) GameOver(); // if player falls too far back
+        if (hitpoints <= 0) GameOver(); // out of hp
 
         // Calculate highscore (based on cam height) and display
         highScore = Mathf.CeilToInt(camera.transform.position.y);
         score.text = highScore.ToString();
     }
 
+    public void DamageDealt()
+    {
+        hitpoints--;
+    }
+
+    public void GameOver()
+    {
+        print("Game over *explosions*");
+        Destroy(gameObject);
+    }
 
 }
