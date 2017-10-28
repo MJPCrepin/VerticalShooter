@@ -8,9 +8,11 @@ Manuel Crepin (manuel@crep.in), Oct'17
 * Score based on peak player height
 * GameObjects destroyed when out of bounds
 * Enemies spawn continuously on platforms
-* Enemies aim around player and soot
+* Enemies aim around player and shoot
+* Player shoots directly at enemies
+* Enemies/player die when out of HP
 
 ## To do
-* Player shooting
 * Fancy effects
-* Punishment for going straight up
+* Punishment for going straight up (eg fuel)
+* Fuel/HP ui

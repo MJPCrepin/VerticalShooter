@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletBehaviour : MonoBehaviour {
+public class PlayerBulletBehaviour : MonoBehaviour {
 
     public float bulletSpeed;
 
     private void Start()
     {
-        bulletSpeed = 40f;
+        bulletSpeed = -50f; // negative = silly hack to get the bullets to fire correct way
         this.GetComponent<Rigidbody>().AddForce(transform.forward * bulletSpeed);
     }
 
 	void Update ()
     {
         // If bullet misses target and is out of bounds, destroy
-        if (transform.position.x > 20 || transform.position.x < -20)
+        if (transform.position.x > 40 || transform.position.x < -40)
         {
             Destroy(gameObject);
         }
@@ -24,10 +24,10 @@ public class BulletBehaviour : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Enemy"))
         {
-            var player = other.GetComponent<PlayerController>();
-            player.DamageDealt();
+            var enemy = other.GetComponent<EnemyController>();
+            enemy.DamageDealt();
 
             Destroy(gameObject); // destroy bullet
         }

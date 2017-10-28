@@ -10,6 +10,7 @@ public class EnemyController : MonoBehaviour {
     public float firingRange, firingRate;
     private float fireCooldown;
     private Vector3 verticalOffset;
+    private int hitpoints;
 
     [Header("Object References")]
 
@@ -20,6 +21,7 @@ public class EnemyController : MonoBehaviour {
 
     void Start()
     {
+        hitpoints = 5;
         firingRange = 12f;
         fireCooldown = 0;
         firingRate = 0.5f; // bullets per second
@@ -34,6 +36,8 @@ public class EnemyController : MonoBehaviour {
 
     private void Update()
     {
+        if (hitpoints <= 0) BlowUp();
+
         // Enemies always face the player
         var playerDirection = (player.transform.position + verticalOffset) - transform.position;
         var lookRotation = Quaternion.LookRotation(playerDirection);
@@ -44,7 +48,6 @@ public class EnemyController : MonoBehaviour {
 
         if (playerIsWithinFiringRange && readyToShoot)
         {
-            print("pew");
             Shoot();
             fireCooldown = 1f / firingRate;
         }
@@ -54,5 +57,16 @@ public class EnemyController : MonoBehaviour {
     private void Shoot()
     {
         GameObject bulletObject = Instantiate(bulletPrefab, transform.position, transform.rotation);
+        bulletObject.AddComponent(typeof(EnemyBulletBehaviour)); // separate behaviour for damage tracking
+    }
+
+    public void DamageDealt()
+    {
+        hitpoints--;
+    }
+
+    private void BlowUp()
+    {
+        Destroy(gameObject);
     }
 }
