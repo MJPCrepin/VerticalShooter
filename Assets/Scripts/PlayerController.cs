@@ -48,13 +48,13 @@ public class PlayerController : MonoBehaviour {
         {
             var jumpVector = new Vector3(0,thrustForce,0);
             playerRb.AddRelativeForce(jumpVector,ForceMode.Force);
+            currentPower -= (playerRb.velocity.magnitude * 2); // lose power with thrust
         }
         else // Lose force (minus idle force)
         {
             playerRb.velocity *= idleThrust;
+            currentPower -= (playerRb.velocity.magnitude); // lose half power when idle
         }
-
-        currentPower -= (playerRb.velocity.magnitude * 2); // lose power with thrust
     }
 
     private void Update()
