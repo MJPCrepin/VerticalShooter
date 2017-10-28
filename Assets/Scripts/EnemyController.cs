@@ -11,11 +11,12 @@ public class EnemyController : MonoBehaviour {
     private float fireCooldown;
     private Vector3 verticalOffset;
     private int hitpoints;
+    private float containedPower;
 
     [Header("Object References")]
 
     public GameObject camera;
-    private GameObject player;
+    private GameObject player, explosion;
     private Transform enemy;
     public GameObject bulletPrefab;
 
@@ -25,6 +26,7 @@ public class EnemyController : MonoBehaviour {
         firingRange = 12f;
         fireCooldown = 0;
         firingRate = 0.5f; // bullets per second
+        containedPower = 500f; // player saps energy when destroyed
 
         // Aim somewhere above player's actual position
         verticalOffset = new Vector3(0, Random.Range(0, 7f), 0);
@@ -67,6 +69,12 @@ public class EnemyController : MonoBehaviour {
 
     private void BlowUp()
     {
+        player.GetComponent<PlayerController>().GainEnergy(containedPower);
+
+        // Explosion prefab
+        GameObject impact = Instantiate((GameObject)Resources.Load("EnemyExplosion"), transform.position, transform.rotation);
+        Destroy(impact, 3f); // cleanup after 3s
+
         Destroy(gameObject);
     }
 }

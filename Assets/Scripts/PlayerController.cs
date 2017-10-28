@@ -2,43 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
-    [Header("Properties")]
-
-    private float firingRange;
-    private float thrustForce, idleThrust;
-    private Rigidbody playerRb;
-    public int hitpoints;
+    public int score;
 
     [Header("Object References")]
 
-    public GameObject bulletPrefab;
-    public GameObject camera; // camera y used for score
-    public Text score;
-    public int highScore;
-    public GameObject floor; // To destroy when far enough
+    private Rigidbody playerRb;
+    public Text scoreText;
+    public Image healthBar, powerBar;
+    public GameObject bulletPrefab, camera, floor, playerExplosion, bars, gameOver;
+
+    [HideInInspector]
+
+    private float firingRange, thrustForce, idleThrust, velocity;
+    private float currentHitpoints, initialHitpoints, currentPower, initialPower;
+    
 
     // Enemy target settings
     private Transform target;
     private string targetTag = "Enemy";
-    private float targetingRange;
-    private float targetUpdateInterval = 0.333f; // in seconds
+    private float targetingRange, targetUpdateInterval;
     private Quaternion lookingAtEnemy; // used for directing bullets
 
     void Start () // objects instantiated here for children safety
     {
         firingRange = 13f;
+        targetUpdateInterval = 0.333f; // in seconds
         playerRb = gameObject.GetComponentInChildren<Rigidbody>();
         thrustForce = 15f;
         idleThrust = 0.95f; // idle velocity multiplier (smoother descent)
-        hitpoints = 10;
+        currentHitpoints = initialHitpoints = 100;
+        currentPower = initialPower = 10000;
         InvokeRepeating("UpdateTarget", 0, targetUpdateInterval);
     }
 	
 	void FixedUpdate () // Physics events
     {
+        // Get player input
         var anyButtonIsPressed = Input.anyKey;
 
         if (anyButtonIsPressed) // Apply force to player
@@ -50,15 +53,22 @@ public class PlayerController : MonoBehaviour {
         {
             playerRb.velocity *= idleThrust;
         }
-	}
+
+        currentPower -= (playerRb.velocity.magnitude * 2); // lose power with thrust
+    }
 
     private void Update()
     {
+
         // Slow rotation, purely aesthetic
         if (transform.position.y > 1)
         { 
             transform.Rotate(new Vector3(0, 90, 0) * 0.1f * Time.deltaTime);
         }
+
+        // Update health and power bars
+        healthBar.fillAmount = currentHitpoints / initialHitpoints;
+        powerBar.fillAmount = currentPower / initialPower;
 
         // Destroy floor (cleanup)
         if (transform.position.y > 10)
@@ -67,25 +77,15 @@ public class PlayerController : MonoBehaviour {
         }
 
         // Game over scenarios
-        if (transform.position.y < highScore - 7) GameOver(); // if player falls too far back
-        if (hitpoints <= 0) GameOver(); // out of hp
+        if (transform.position.y < score - 7) GameOver(); // if player falls too far back
+        if (currentHitpoints <= 0) GameOver(); // out of hp
+        if (currentPower <= 0) GameOver(); // out of power
 
         // Calculate highscore (based on cam height) and display
-        highScore = Mathf.CeilToInt(camera.transform.position.y);
-        score.text = highScore.ToString();
+        score = Mathf.CeilToInt(camera.transform.position.y);
+        scoreText.text = score.ToString();
 
-        if (target == null) return;
-    }
-
-    public void DamageDealt() // called by bullet if payer hit
-    {
-        hitpoints--;
-    }
-
-    public void GameOver()
-    {
-        print("Game over *explosions*");
-        Destroy(gameObject);
+        if (target == null) return; // Don't shoot if there's no target
     }
 
     private void UpdateTarget() // detect closest enemy and shoot at it
@@ -120,4 +120,33 @@ public class PlayerController : MonoBehaviour {
         bulletObject.AddComponent(typeof(PlayerBulletBehaviour)); // separate behaviour for damage tracking
     }
 
+    public void DamageDealt(float damage) // called by bullet if payer hit
+    {
+        currentHitpoints -= damage;
+    }
+
+    public void GainEnergy(float power)
+    {
+        currentPower += power;
+    }
+
+    public void GameOver()
+    {
+        // Player explosion
+        GameObject impact = Instantiate(playerExplosion, transform.position, transform.rotation);
+        Destroy(impact, 3f); // cleanup after 3s
+
+        // Deactivate player and stop shooting by removing all platforms
+        gameObject.SetActive(false);
+        gameObject.GetComponent<EnemySpawner>().DeleteAllPlatforms();
+
+        // UI elements
+        bars.SetActive(false);
+        gameOver.SetActive(true);
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

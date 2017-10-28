@@ -88,4 +88,13 @@ public class EnemySpawner : MonoBehaviour {
         platforms.Enqueue(newPlat);
     }
 
+    public void DeleteAllPlatforms()
+    {
+        while (platforms.Count > 0)
+        {
+            Destroy(platforms.Dequeue());
+        }
+        
+    }
+
 }

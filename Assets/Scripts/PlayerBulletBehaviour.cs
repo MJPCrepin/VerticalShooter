@@ -5,9 +5,11 @@ using UnityEngine;
 public class PlayerBulletBehaviour : MonoBehaviour {
 
     public float bulletSpeed;
+    private GameObject bulletImpact;
 
     private void Start()
     {
+        bulletImpact = (GameObject)Resources.Load("BulletImpact");
         bulletSpeed = -50f; // negative = silly hack to get the bullets to fire correct way
         this.GetComponent<Rigidbody>().AddForce(transform.forward * bulletSpeed);
     }
@@ -19,7 +21,6 @@ public class PlayerBulletBehaviour : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-
     }
 
     void OnTriggerEnter(Collider other)
@@ -28,6 +29,10 @@ public class PlayerBulletBehaviour : MonoBehaviour {
         {
             var enemy = other.GetComponent<EnemyController>();
             enemy.DamageDealt();
+
+            // Generate bullet impact effect when hit
+            GameObject impact = Instantiate(bulletImpact, transform.position, transform.rotation);
+            Destroy(impact, 3f); // cleanup after 3s
 
             Destroy(gameObject); // destroy bullet
         }
